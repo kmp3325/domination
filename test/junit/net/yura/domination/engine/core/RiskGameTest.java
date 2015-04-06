@@ -1,20 +1,33 @@
 package net.yura.domination.engine.core;
 
 import java.io.File;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.TestCase;
 import net.yura.domination.engine.RiskUIUtil;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Yur Mamyrin
  */
 public class RiskGameTest extends TestCase {
+    RiskGame instance;
     
     public RiskGameTest(String testName) {
         super(testName);
     }
 
     protected void setUp() throws Exception {
-        super.setUp();
+        super.setUp();        
+        try {
+            RiskUIUtil.mapsdir = new File("./game/Domination/maps").toURI().toURL();
+            instance = new RiskGame();
+        }
+        catch(Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     protected void tearDown() throws Exception {
@@ -26,15 +39,6 @@ public class RiskGameTest extends TestCase {
      */
     public void testTrade() {
         System.out.println("trade");
-
-        RiskGame instance;
-        try {
-            RiskUIUtil.mapsdir = new File("./game/Domination/maps").toURI().toURL();
-            instance = new RiskGame();
-        }
-        catch(Exception ex) {
-            throw new RuntimeException(ex);
-        }
 
         //Country country =  new Country(1, "name", "Full Name", new Continent("name", "Full Name", 5, 0xFFFF0000), 10, 10);
 
@@ -352,5 +356,126 @@ public class RiskGameTest extends TestCase {
         
         
     }
-
+    
+    public void testStartGame() {
+        try {
+            instance.startGame(1, 1, true, true);
+        } catch (Exception ex) {
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
+    }
+    
+    public void testAddCommand() {
+        String command = "hello";
+        instance.addCommand(command);
+        assertTrue(instance.getCommands().contains(command));
+    }
+    
+    public void testSetCommands() {
+        Vector commands = new Vector();
+        commands.add("hello");
+        commands.add("hi");
+        instance.setCommands(commands);
+        assertEquals(commands, instance.getCommands());
+    }
+    
+    public void testAddPlayer() {
+        assertTrue(instance.addPlayer(1, "Bill", 1, "1"));
+        try {
+            instance.startGame(1, 1, true, true);
+        } catch (Exception ex) {
+            fail();
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        assertFalse(instance.addPlayer(2, "Bob", 2, "2"));
+    }
+    
+    public void testDelPlayer() {
+        instance.addPlayer(1, "Bill", 1, "1");
+        assertTrue(instance.delPlayer("Bill"));
+        assertFalse(instance.delPlayer("Bill"));
+        instance.addPlayer(1, "Bill", 1, "1");
+        try {
+            instance.startGame(1, 1, true, true);
+        } catch (Exception ex) {
+            fail();
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        assertFalse(instance.delPlayer("Bill"));
+    }
+    
+    public void testLoadMap() {
+        try {
+            instance.loadMap();
+        } catch (Exception ex) {
+            fail();
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void testTestMap() {
+        try {
+            instance.testMap();
+            fail();
+        } catch (Exception ex) {
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        try {
+            instance.loadMap();
+            instance.testMap();
+        } catch (Exception ex) {
+            fail();
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void testGetRandomCountry() {
+        try {
+            instance.startGame(1, 1, true, true);
+        } catch (Exception ex) {
+            fail();
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        boolean success = false;
+        int cId = instance.getRandomCountry();
+        Country[] cs = instance.getCountries();
+        for (Country c : cs) {
+            if (c.getColor() == cId) {
+                success = true;
+            }
+        }
+        assertTrue(success);
+    }
+    
+    
+//    public void testAttack() {
+//        RiskGame instance;
+//        
+//        try {
+//            RiskUIUtil.mapsdir = new File("./game/Domination/maps").toURI().toURL();
+//            instance = new RiskGame();
+//        }
+//        catch(Exception ex) {
+//            throw new RuntimeException(ex);
+//        }
+//        
+//        Continent continent = new Continent("North America", "North America", 10, 3);
+//        Country c1 = new Country(1, "USA", "USA", continent, 0, 0);
+//        Country c2 = new Country(2, "Canada", "Canada", continent, 1, 1);
+//        c1.setOwner(new Player(1, "Player 1", 1, ""));
+//        c2.setOwner(new Player(2, "Player 2", 2, ""));
+//        c1.addNeighbour(c2);
+//        c2.addNeighbour(c1);
+//        c1.addArmies(2);
+//        
+//        assertFalse(instance.attack(c1, c2));
+//        assertNull(instance.getAttacker());
+//        
+//        when(instance.canContinue()).thenReturn(true);
+//        instance.continuePlay();
+//        assertTrue(instance.attack(c1, c2));
+//    }
 }

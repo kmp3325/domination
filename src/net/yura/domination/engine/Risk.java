@@ -683,7 +683,7 @@ RiskUtil.printStackTrace(e);
 
 	/**
 	 * This parses the string, calls the relavant method and displays the correct error messages
-	 * @param mem The string needed for parsing
+	 * @param message The string needed for parsing
 	 */
 	protected void inGameParser(final String message) {
 
