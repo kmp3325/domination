@@ -156,6 +156,16 @@ public class ColorUtilTest extends TestCase {
         assertEquals("Returned new color numeric does not match added HEX", 
                      dark_blue,
                      ColorUtil.getColor(dark_blue_name));
+        
+        // Test 4. Get numeric from a string with a parsable integer
+        assertEquals("Returned incorrect numeric from string with a parsable integer",
+                     0xFF1234AB,
+                     ColorUtil.getColor( "0x1234AB" ) );
+        
+        // Test 5. Get numeric from a string without a parsable integer
+        assertEquals("Returned an integer from a string without a parsable integer",
+                     0,
+                     ColorUtil.getColor( "MATT" ) );
     }
 
     /**
@@ -164,7 +174,36 @@ public class ColorUtilTest extends TestCase {
     public void testGetTextColorFor() {
         System.out.println("Starting testGetTextColorFor");
         
-        fail("The test case is a prototype.");
+        // Test 1. Boundary testing expecting return BLACK
+        int[] colorArray = new int[] { 0xFFF53333,
+                                       0xFF33F533,
+                                       0xFFC8C833,
+                                       0xFFF0F133,
+                                       0xFFF1F033,
+                                       ColorUtil.BLACK
+                                     };
+        for( int i = 0; i < colorArray.length; i++ )
+        {
+            assertEquals( "Did not return BLACK enumeration",
+                          ColorUtil.BLACK,
+                          ColorUtil.getTextColorFor( colorArray[i] ) );
+        }
+        
+        // Test 2. Boundary testing expecting return WHITE
+        colorArray = new int[] { 0xFF323233,
+                                 0xFF969733,
+                                 0xFF979633,
+                                 0xFFF09633,
+                                 0xFF96F033,
+                                 ColorUtil.WHITE
+                               };
+        
+        for( int i = 0; i < colorArray.length; i++ )
+        {
+            assertEquals( "Did not return WHITE enumeration",
+                          ColorUtil.WHITE,
+                          ColorUtil.getTextColorFor( colorArray[i] ) );
+        }
     }
 
     /**
@@ -195,7 +234,20 @@ public class ColorUtilTest extends TestCase {
     public void testGetGreen() {
         System.out.println("getGreen");
         
-        fail("The test case is a prototype.");
+        // Test 1. Verify the correct green component value is returned
+        assertEquals( "Returned an incorrect value for the green component",
+                      33,
+                      ColorUtil.getGreen( 0xFF602160 ) );
+        
+        // Test 2. Verify a color with the max green component returns correcty
+        assertEquals( "Did not return the max green component",
+                      255,
+                      ColorUtil.getGreen( 0xFF60FF60) );
+        
+        // Test 3. Verify a color without a green component returns correctly
+        assertEquals( "Returned a green component instead of 0",
+                      0,
+                      ColorUtil.getGreen( 0xFF600060 ) );
     }
 
     /**
@@ -204,7 +256,20 @@ public class ColorUtilTest extends TestCase {
     public void testGetBlue() {
         System.out.println("getBlue");
         
-        fail("The test case is a prototype.");
+        // Test 1. Verify the correct blue component value is returned
+        assertEquals( "Returned an incorrect value for the blue component",
+                      33,
+                      ColorUtil.getBlue( 0xFF606021 ) );
+        
+        // Test 2. Verify a color with the max blue component returns correcty
+        assertEquals( "Did not return the max blue component",
+                      255,
+                      ColorUtil.getBlue( 0xFF6060FF) );
+        
+        // Test 3. Verify a color without a blue component returns correctly
+        assertEquals( "Returned a blue component instead of 0",
+                      0,
+                      ColorUtil.getBlue( 0xFF606000 ) );
     }
 
     /**
@@ -213,7 +278,20 @@ public class ColorUtilTest extends TestCase {
     public void testGetAlpha() {
         System.out.println("getAlpha");
         
-        fail("The test case is a prototype.");
+        // Test 1. Verify the correct alpha component value is returned
+        assertEquals( "Returned an incorrect value for the alpha component",
+                      33,
+                      ColorUtil.getAlpha( 0x218060CA ) );
+        
+        // Test 2. Verify a color with the max alpha component returns correcty
+        assertEquals( "Did not return the max alpha component",
+                      255,
+                      ColorUtil.getAlpha( 0xFF8060CA) );
+        
+        // Test 3. Verify a color without a alpha component returns correctly
+        assertEquals( "Returned a alpha component instead of 0",
+                      0,
+                      ColorUtil.getAlpha( 0x008060CA ) );
     }
 
     /**
@@ -222,6 +300,56 @@ public class ColorUtilTest extends TestCase {
     public void testGetHexForColor() {
         System.out.println("getHexForColor");
         
-        fail("The test case is a prototype.");
+        // Test 1. Test correct string returned
+        assertEquals( "Returned incorrect string",
+                      "#123456",
+                      ColorUtil.getHexForColor( 0xFF123456 ) );
+        assertEquals( "Returned incorrect string",
+                       "#000000",
+                        ColorUtil.getHexForColor( 0xFF000000 ) );
+        assertEquals( "Returned incorrect string",
+                      "#ffffff",
+                      ColorUtil.getHexForColor( 0xFFFFFFFF ) );
+        
+        // Test 2. Test correct enumeration string returned
+        assertEquals( "Returned incorrect enumeration string",
+                      "#000000",
+                      ColorUtil.getHexForColor( ColorUtil.BLACK ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#ffffff",
+                      ColorUtil.getHexForColor( ColorUtil.WHITE ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#c0c0c0",
+                      ColorUtil.getHexForColor( ColorUtil.LIGHT_GRAY ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#808080",
+                      ColorUtil.getHexForColor( ColorUtil.GRAY ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#404040",
+                      ColorUtil.getHexForColor( ColorUtil.DARK_GRAY ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#ff0000",
+                      ColorUtil.getHexForColor( ColorUtil.RED ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#ffafaf",
+                      ColorUtil.getHexForColor( ColorUtil.PINK ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#ffc800",
+                      ColorUtil.getHexForColor( ColorUtil.ORANGE ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#ffff00",
+                      ColorUtil.getHexForColor( ColorUtil.YELLOW ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#00ff00",
+                      ColorUtil.getHexForColor( ColorUtil.GREEN ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#ff00ff",
+                      ColorUtil.getHexForColor( ColorUtil.MAGENTA ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#00ffff",
+                      ColorUtil.getHexForColor( ColorUtil.CYAN ) );
+        assertEquals( "Returned incorrect enumeration string",
+                      "#0000ff",
+                      ColorUtil.getHexForColor( ColorUtil.BLUE ) );
     }
 }
