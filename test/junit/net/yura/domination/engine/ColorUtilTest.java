@@ -173,7 +173,20 @@ public class ColorUtilTest extends TestCase {
     public void testGetRed() {
         System.out.println("Starting testGetRed");
         
-        fail("The test case is a prototype.");
+        // Test 1. Verify the correct red component value is returned
+        assertEquals( "Returned an incorrect value for the red component",
+                      33,
+                      ColorUtil.getRed( 0xFF2180CA ) );
+        
+        // Test 2. Verify a color with the max red component returns correcty
+        assertEquals( "Did not return the max red component",
+                      255,
+                      ColorUtil.getRed( 0xFFFF4E2A) );
+        
+        // Test 3. Verify a color without a red component returns correctly
+        assertEquals( "Returned a red component instead of 0",
+                      0,
+                      ColorUtil.getRed( 0xFF0080CA ) );
     }
 
     /**
