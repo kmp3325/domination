@@ -27,8 +27,6 @@ public class ColorUtilTest extends TestCase {
      */
     public ColorUtilTest(String testName) {
         super(testName);
-        
-        // TODO: anything to do here?
     }
     
     /**
