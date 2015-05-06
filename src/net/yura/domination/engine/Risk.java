@@ -1028,6 +1028,8 @@ RiskUtil.printStackTrace(e);
                     String oldName = (String)map.get("oldName");
                     String newName = (String)map.get("newName");
                     String newAddress = (String)map.get("newAddress");
+                    System.out.println("the new type!!!!!!!!!!!");
+                    System.out.println(map.get("newType"));
                     int newType = Integer.parseInt((String)map.get("newType"));
 
                     try {

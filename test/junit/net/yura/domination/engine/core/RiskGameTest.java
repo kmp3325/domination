@@ -29,6 +29,15 @@ public class RiskGameTest extends TestCase {
             throw new RuntimeException(ex);
         }
     }
+    
+    protected void startGame() {
+        try {
+            instance.startGame(1, 1, true, true);
+        } catch (Exception ex) {
+            fail();
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     protected void tearDown() throws Exception {
         super.tearDown();
@@ -359,11 +368,33 @@ public class RiskGameTest extends TestCase {
     
     public void testStartGame() {
         try {
-            instance.startGame(1, 1, true, true);
+            instance.startGame(1, 2, true, true);
+            assertEquals(3, instance.getMaxDefendDice());
+            assertEquals(2, instance.getCardMode());
+            assertEquals(1, instance.getGameMode());
+            
+            setUp();
+            instance.startGame(1, 2, false, false);
+            assertEquals(2, instance.getMaxDefendDice());
         } catch (Exception ex) {
             Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
             fail();
         }
+    }
+    
+    public void testSetCurrentPlayer() {
+        assertNull(instance.getCurrentPlayer());
+        try {
+            instance.setCurrentPlayer(1);
+            fail();
+        } catch (IndexOutOfBoundsException e) {}
+        instance.addPlayer(1, "Tim", 1, "1");
+        instance.setCurrentPlayer(0);
+        assertEquals("Tim", instance.getCurrentPlayer().getName());
+        
+        instance.addPlayer(2, "Bill", 2, "2");
+        int p = instance.getRandomPlayer();
+        assertTrue(p == 0 || p == 1);
     }
     
     public void testAddCommand() {
@@ -382,13 +413,11 @@ public class RiskGameTest extends TestCase {
     
     public void testAddPlayer() {
         assertTrue(instance.addPlayer(1, "Bill", 1, "1"));
-        try {
-            instance.startGame(1, 1, true, true);
-        } catch (Exception ex) {
-            fail();
-            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        assertFalse(instance.addPlayer(2, "Bob", 2, "2"));
+        assertTrue(instance.addPlayer(2, "Bob", 2, "2"));
+        assertFalse(instance.addPlayer(3, "Bob", 3, "3"));
+        assertFalse(instance.addPlayer(4, "Tim", 2, "4"));
+        startGame();
+        assertFalse(instance.addPlayer(20, "Jen", 20, "20"));
     }
     
     public void testDelPlayer() {
@@ -396,12 +425,7 @@ public class RiskGameTest extends TestCase {
         assertTrue(instance.delPlayer("Bill"));
         assertFalse(instance.delPlayer("Bill"));
         instance.addPlayer(1, "Bill", 1, "1");
-        try {
-            instance.startGame(1, 1, true, true);
-        } catch (Exception ex) {
-            fail();
-            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        startGame();
         assertFalse(instance.delPlayer("Bill"));
     }
     
@@ -418,9 +442,7 @@ public class RiskGameTest extends TestCase {
         try {
             instance.testMap();
             fail();
-        } catch (Exception ex) {
-            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } catch (Exception ex) {}
         
         try {
             instance.loadMap();
@@ -431,13 +453,43 @@ public class RiskGameTest extends TestCase {
         }
     }
     
-    public void testGetRandomCountry() {
+    public void testEndGo() {
+        assertNull(instance.endGo());
+        instance.addPlayer(1, "Tim", 1, "1");
+        startGame();
+        instance.setCurrentPlayer(0);
+        instance.placeArmy(instance.getCountries()[0], 1);
+        assertEquals("Tim", instance.endGo().getName());
+        
         try {
-            instance.startGame(1, 1, true, true);
+            setUp();
         } catch (Exception ex) {
             fail();
             Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        instance.addPlayer(1, "Tim", 1, "1");
+        instance.addPlayer(2, "Bill", 2, "2");
+        startGame();
+        instance.setCurrentPlayer(0);
+        instance.placeArmy(instance.getCountries()[0], 1);
+        assertEquals("Bill", instance.endGo().getName());
+    }
+    
+    public void testPlaceArmy() {
+        instance.addPlayer(1, "Tim", 1, "1");
+        instance.addPlayer(2, "Bill", 2, "2");
+        startGame();
+        instance.setCurrentPlayer(0);
+        Country[] cs = instance.getCountries();
+        assertEquals(0, instance.placeArmy(instance.getCountries()[0], 2));
+        assertEquals(1, instance.placeArmy(instance.getCountries()[0], 1));
+        //assertEquals(0, instance.placeArmy(instance.getCountries()[0], 1));
+        
+    }
+    
+    public void testGetRandomCountry() {
+        startGame();
         
         boolean success = false;
         int cId = instance.getRandomCountry();
@@ -448,6 +500,22 @@ public class RiskGameTest extends TestCase {
             }
         }
         assertTrue(success);
+    }
+    
+    public void testCanContinue() {
+        assertFalse(instance.canContinue());
+        
+    }
+    
+    public void testAttack() {
+        try {
+            instance.startGame(1, 1, true, true);
+        } catch (Exception ex) {
+            Logger.getLogger(RiskGameTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Country c1 = instance.getCountries()[0];
+        Country c2 = instance.getCountries()[1];
+        assertFalse(instance.attack(c1, c2));
     }
     
     
