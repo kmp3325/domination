@@ -14,6 +14,8 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.TestCase;
 import net.yura.domination.engine.ai.AIManager;
 import net.yura.domination.engine.core.Card;
@@ -121,6 +123,116 @@ public class RiskTest extends TestCase {
         instance.inGameParser(message);
         
         message = "SOMETHING ELSE";
+        instance.inGameParser(message);
+        
+        message = "o choosemap";
+        instance.inGameParser(message);
+        
+        message = "o choosemap test";
+        instance.inGameParser(message);
+        
+        message = "o choosecards";
+        instance.inGameParser(message);
+        
+        message = "o choosecards test";
+        try {
+            when(game.setCardsfile(anyString())).thenReturn(true);
+        } catch (Exception ex) {
+            Logger.getLogger(RiskTest.class.getName()).log(Level.SEVERE, null, ex);
+            fail();
+        }
+        instance.inGameParser(message);
+        
+        message = "o delplayer";
+        instance.inGameParser(message);
+        
+        message = "o delplayer test";
+        when(game.delPlayer(anyString())).thenReturn(true);
+        instance.inGameParser(message);
+        
+        message = "o info error";
+        instance.inGameParser(message);
+        
+        message = "o info";
+        when(game.getMapFile()).thenReturn("mapFile");
+        when(game.getCardsFile()).thenReturn("cardsFile");
+        instance.inGameParser(message);
+        
+        message = "o autosetup error";
+        instance.inGameParser(message);
+        
+        message = "o autosetup";
+        instance.inGameParser(message);
+        
+        when(game.getPlayers()).thenReturn(new Vector());
+        instance.setReplay(true);
+        instance.inGameParser(message);
+        
+        instance.setReplay(false);
+        instance.inGameParser(message);
+        
+        message = "o startgame error";
+        instance.inGameParser(message);
+        
+        message = "o startgame capital italianlike autoplaceall";
+        when(game.getPlayers()).thenReturn(playerList);
+        when(game.getState()).thenReturn(RiskGame.STATE_ATTACKING);
+        instance.onlinePlayClient = null;
+        when(game.getRandomPlayer()).thenReturn(0);
+        when(game.getNoMissions()).thenReturn(1);
+        when(game.getNoPlayers()).thenReturn(1);
+        when(game.getGameMode()).thenReturn(RiskGame.MODE_SECRET_MISSION);
+        Vector countries = new Vector();
+        countries.add(c);
+        when(c.getColor()).thenReturn(0);
+        when(game.shuffleCountries()).thenReturn(countries);
+        instance.inGameParser(message);
+        
+        message = "o play";
+        instance.inGameParser(message);
+        
+        message = "o play test";
+        instance.inGameParser(message);
+        
+        message = "o showarmies error";
+        instance.inGameParser(message);
+        
+        message = "o showarmies";
+        Country[] countriesArray = new Country[1];
+        countriesArray[0] = c;
+        when(game.getCountries()).thenReturn(countriesArray);
+        instance.inGameParser(message);
+        
+        when(c.getOwner()).thenReturn(p);
+        when(c.getArmies()).thenReturn(1);
+        when(game.getGameMode()).thenReturn(2);
+        when(game.getSetupDone()).thenReturn(true);
+        when(game.getState()).thenReturn(RiskGame.STATE_ATTACKING);
+        p.setCapital(c);
+        instance.inGameParser(message);
+        
+        message = "o showcards error";
+        instance.inGameParser(message);
+        
+        message = "o showcards";
+        when(game.getState()).thenReturn(RiskGame.STATE_GAME_OVER);
+        Card card = mock(Card.class);
+        when(card.getName()).thenReturn(Card.WILDCARD);
+        when(game.getCardMode()).thenReturn(RiskGame.CARD_FIXED_SET);
+        p.giveCard(card);
+        instance.inGameParser(message);
+        
+        when(card.getName()).thenReturn(Card.CANNON);
+        when(game.getCardMode()).thenReturn(RiskGame.CARD_ITALIANLIKE_SET);
+        instance.inGameParser(message);
+        
+        when(game.getCardMode()).thenReturn(RiskGame.CARD_INCREASING_SET);
+        instance.inGameParser(message);
+        
+        message = "o autoendgo";
+        instance.inGameParser(message);
+        
+        message = "o autodefend";
         instance.inGameParser(message);
     }
 
@@ -586,4 +698,145 @@ public class RiskTest extends TestCase {
         assertEquals(p, instance.findEmptySpot());
     }
     
+    public void testProcessFromUI() {
+        System.out.println("processFromUI");
+        
+        Risk instance = new Risk();
+        RiskController rc = mock(RiskController.class);
+        instance.controller = rc;
+        instance.inbox.add("dummy message");
+        
+        String message = "";
+        instance.processFromUI(message);
+        
+        message = "ver";
+        instance.processFromUI(message);
+        
+        message = "rem stuff";
+        instance.processFromUI(message);
+        
+        instance.resb = resourceBundle;
+        message = "whatever";
+        instance.game = null;
+        instance.processFromUI(message);
+        
+        RiskGame game = mock(RiskGame.class);
+        instance.game = game;
+        message = "closegame";
+        OnlineRisk online = mock(OnlineRisk.class);
+        instance.onlinePlayClient = online;
+        instance.processFromUI(message);
+        instance.game = game;
+        instance.inbox.add("dummy message");
+        
+        message = "closegame stuff";
+        instance.processFromUI(message);
+        
+        message = "savegame";
+        instance.processFromUI(message);
+        
+        message = "savegame stuff";
+        instance.unlimitedLocalMode = false;
+        instance.processFromUI(message);
+        
+        instance.unlimitedLocalMode = true;
+        message = "savegame stuff things";
+        instance.processFromUI(message);
+        
+        message = "replay";
+        Vector v = new Vector();
+        v.add("command");
+        when(game.getCommands()).thenReturn(v);
+        instance.processFromUI(message);
+        
+        instance.unlimitedLocalMode = false;
+        instance.processFromUI(message);
+        
+        message = "replay stuff";
+        instance.processFromUI(message);
+        
+        message = "whatever";
+        instance.onlinePlayClient = null;
+        instance.processFromUI(message);
+        
+        instance.onlinePlayClient = online;
+        instance.processFromUI(message);
+        
+        message = "replay newgame more";
+        instance.game = null;
+        instance.processFromUI(message);
+        
+        message = "replay newgame";
+        instance.processFromUI(message);
+        
+        message = "replay loadgame";
+        instance.processFromUI(message);
+        
+        message = "replay join";
+        instance.processFromUI(message);
+        
+        message = "replay join stuff";
+        instance.processFromUI(message);
+        
+        message = "replay startserver stuff";
+        instance.processFromUI(message);
+        
+        message = "replay startserver";
+        instance.processFromUI(message);
+        
+        message = "replay killserver stuff";
+        instance.processFromUI(message);
+        
+        message = "replay killserver";
+        instance.processFromUI(message);
+        
+        message = "unknown";
+        instance.processFromUI(message);
+    }
+    
+    public void testNoGameParser() {
+        System.out.println("noGameParser");
+        
+        Risk instance = new Risk();
+        RiskController rc = mock(RiskController.class);
+        instance.controller = rc;
+        instance.resb = resourceBundle;
+        instance.inbox.add("dummy message");
+        
+        String message = "newgame error";
+        instance.noGameParser(message);
+        
+        message = "newgame";
+        instance.noGameParser(message);
+        
+        message = "newgame new";
+        instance.noGameParser(message);
+        
+        message = "loadgame";
+        instance.noGameParser(message);
+        
+        message = "loadgame test";
+        instance.noGameParser(message);
+        
+        message = "join";
+        instance.noGameParser(message);
+        
+        message = "join stuff";
+        instance.noGameParser(message);
+        
+        message = "startserver error";
+        instance.noGameParser(message);
+        
+        message = "startserver";
+        instance.noGameParser(message);
+        
+        message = "killserver error";
+        instance.noGameParser(message);
+        
+        message = "killserver";
+        instance.noGameParser(message);
+        
+        message = "unknown";
+        instance.noGameParser(message);
+    }
 }

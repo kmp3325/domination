@@ -324,7 +324,7 @@ public class Risk extends Thread {
             }
         }
 
-        private void processFromUI(String message) {
+        protected void processFromUI(String message) {
 
                 if ( message.trim().length()==0 ) {
                         controller.sendMessage(">", false, false );
@@ -438,7 +438,7 @@ public class Risk extends Thread {
 
 	}
 
-        private void noGameParser(String message) {
+        protected void noGameParser(String message) {
 
                 StringTokenizer StringT = new StringTokenizer( message );
 
@@ -457,7 +457,7 @@ public class Risk extends Thread {
 
                                         try {
 
-                                                // CREATE A GAME
+                                            // CREATE A GAME
                                                 game = new RiskGame();
 
                                                 // NO SERVER OR CLIENT IS STARTED
