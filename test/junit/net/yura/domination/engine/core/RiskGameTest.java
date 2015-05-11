@@ -1,5 +1,6 @@
 package net.yura.domination.engine.core;
 
+import java.awt.Color;
 import java.io.File;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -518,6 +519,48 @@ public class RiskGameTest extends TestCase {
         assertFalse(instance.attack(c1, c2));
     }
     
+    public void testHSBtoRGB() {
+        float h = 0;
+        float s = 0;
+        float b = 0;
+        assertEquals(Color.HSBtoRGB(h, s, b), RiskGame.HSBtoRGB(h, s, b));
+        
+        h = 10;s = 10;b = 10;
+        assertEquals(Color.HSBtoRGB(h, s, b), RiskGame.HSBtoRGB(h, s, b));
+
+        h = -1.11f;s = 10;b = 10;
+        assertEquals(Color.HSBtoRGB(h, s, b), RiskGame.HSBtoRGB(h, s, b));
+        
+        h = -1.22f;s = 10;b = 10;
+        assertEquals(Color.HSBtoRGB(h, s, b), RiskGame.HSBtoRGB(h, s, b));
+        
+        h = -1.39f;s = 10;b = 10;
+        assertEquals(Color.HSBtoRGB(h, s, b), RiskGame.HSBtoRGB(h, s, b));
+        
+        h = -1.55f;s = 10;b = 10;
+        assertEquals(Color.HSBtoRGB(h, s, b), RiskGame.HSBtoRGB(h, s, b));
+        
+        h = -1.77f;s = 10;b = 10;
+        assertEquals(Color.HSBtoRGB(h, s, b), RiskGame.HSBtoRGB(h, s, b));
+
+    }
+    
+    public void testGetPlayer() {
+        instance.addPlayer(0, "n", 0, "0");
+        assertNotNull(instance.getPlayer("n"));
+        assertNull(instance.getPlayer("none"));
+    }
+    
+    public void testGetMapName() {
+        instance.setMapName("new-name");
+        assertEquals("new-name", instance.getMapName());
+        instance.setMapName(null);
+        assertNull(instance.getMapName());
+    }
+    
+    public void testSetupNewMap() {
+        instance.setupNewMap();
+    }
     
 //    public void testAttack() {
 //        RiskGame instance;

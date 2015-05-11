@@ -8,3 +8,5 @@ bin/classes/
 assets/
 *.iml
 .idea/
+nbproject/coverage.properties
+nbproject/project.properties

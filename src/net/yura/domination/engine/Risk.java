@@ -2841,7 +2841,7 @@ RiskUtil.printStackTrace(e);
                 getInput();
         }
 
-        private void renamePlayer(String name,String newName, String newAddress,int newType) {
+        protected void renamePlayer(String name,String newName, String newAddress,int newType) {
 
                 if ("".equals(name) || "".equals(newName) || "".equals(newAddress) || newType==-1) {
                     throw new IllegalArgumentException("bad rename "+name+" "+newName+" "+newAddress+" "+newType);

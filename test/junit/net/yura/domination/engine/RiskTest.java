@@ -207,7 +207,7 @@ public class RiskTest extends TestCase {
         when(c.getArmies()).thenReturn(1);
         when(game.getGameMode()).thenReturn(2);
         when(game.getSetupDone()).thenReturn(true);
-        when(game.getState()).thenReturn(RiskGame.STATE_ATTACKING);
+        when(game.getCurrentPlayer()).thenReturn(p);
         p.setCapital(c);
         instance.inGameParser(message);
         
@@ -838,5 +838,18 @@ public class RiskTest extends TestCase {
         
         message = "unknown";
         instance.noGameParser(message);
+    }
+    
+    public void testRenamePlayer() {
+        Risk instance = new Risk();
+        RiskGame game = mock(RiskGame.class);
+        instance.game = game;
+        Vector v = new Vector();
+        Player p = new Player(0, "name", 0, "0");
+        v.add(p);
+        when(game.getPlayers()).thenReturn(v);
+        
+        instance.renamePlayer("name", "newname", "1", 1);
+        assertEquals("newname", p.getName());
     }
 }
